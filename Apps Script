@@ -1,0 +1,32 @@
+function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.openById("1SbSVaWg_ryBkA2PuzgFIec6JeYYUiCeq3wlv7PjId-o").getSheetByName("Sheet1"); // Replace with your actual Sheet ID & Name
+    
+    var data = e.parameter; // Retrieve form data
+
+    // Convert waste values to integers to prevent string concatenation issues
+    var paperWaste = parseInt(data.paperWaste) || 0;
+    var fabricWaste = parseInt(data.fabricWaste) || 0;
+    var cartonWaste = parseInt(data.cartonWaste) || 0;
+    var whiteWaste = parseInt(data.whiteWaste) || 0;
+    var plasticWaste = parseInt(data.plasticWaste) || 0;
+
+    var totalWaste = paperWaste + fabricWaste + cartonWaste + whiteWaste + plasticWaste; // Correct total calculation
+
+    // Append new row to the sheet
+    sheet.appendRow([
+      data.date, 
+      data.time, 
+      paperWaste, 
+      fabricWaste, 
+      cartonWaste, 
+      whiteWaste, 
+      plasticWaste, // Correct placement
+      totalWaste    // Ensuring total is in the last column
+    ]);
+
+    return ContentService.createTextOutput("Data saved successfully").setMimeType(ContentService.MimeType.TEXT);
+  } catch (error) {
+    return ContentService.createTextOutput("Error: " + error.toString()).setMimeType(ContentService.MimeType.TEXT);
+  }
+}
