@@ -1,0 +1,154 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Entry Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: auto;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .quantity {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .quantity input {
+            text-align: center;
+            width: 50%;
+        }
+        .quantity button {
+            width: 20%;
+            font-size: 18px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .quantity button:hover {
+            background: #0056b3;
+        }
+        .waste-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .waste-container img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        #submitBtn {
+            background: #28a745;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        #submitBtn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Waste Entry Form</h2>
+
+    <form id="wasteForm">
+        <label>Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label>Time:</label>
+        <input type="time" id="time" name="time" required>
+
+        <label>Paper Waste (Qty.):</label>
+        <div class="waste-container">
+            <img src="https://thumbs.dreamstime.com/z/paper-wastes-segregated-ready-to-recycling-38682715.jpg" alt="Paper Waste">
+            <div class="quantity">
+                <button type="button" onclick="adjustValue('paperWaste', -1)">-</button>
+                <input type="number" id="paperWaste" name="paperWaste" value="0" min="0">
+                <button type="button" onclick="adjustValue('paperWaste', 1)">+</button>
+            </div>
+        </div>
+
+        <label>Fabric Waste (Qty.):</label>
+        <div class="waste-container">
+            <img src="fabric.png" alt="Fabric Waste">
+            <div class="quantity">
+                <button type="button" onclick="adjustValue('fabricWaste', -1)">-</button>
+                <input type="number" id="fabricWaste" name="fabricWaste" value="0" min="0">
+                <button type="button" onclick="adjustValue('fabricWaste', 1)">+</button>
+            </div>
+        </div>
+
+        <label>Carton Paper Waste (Qty.):</label>
+        <div class="waste-container">
+            <img src="carton.png" alt="Carton Paper Waste">
+            <div class="quantity">
+                <button type="button" onclick="adjustValue('cartonWaste', -1)">-</button>
+                <input type="number" id="cartonWaste" name="cartonWaste" value="0" min="0">
+                <button type="button" onclick="adjustValue('cartonWaste', 1)">+</button>
+            </div>
+        </div>
+
+        <label>White Paper Waste (Qty.):</label>
+        <div class="waste-container">
+            <img src="white-paper.png" alt="White Paper Waste">
+            <div class="quantity">
+                <button type="button" onclick="adjustValue('whiteWaste', -1)">-</button>
+                <input type="number" id="whiteWaste" name="whiteWaste" value="0" min="0">
+                <button type="button" onclick="adjustValue('whiteWaste', 1)">+</button>
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <script>
+        function adjustValue(id, change) {
+            let input = document.getElementById(id);
+            let newValue = parseInt(input.value) + change;
+            if (newValue >= 0) input.value = newValue;
+        }
+
+        document.getElementById("wasteForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            fetch("YOUR_WEB_APP_URL", { 
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => alert(data))
+            .catch(error => console.error("Error:", error));
+        });
+
+        document.getElementById("date").valueAsDate = new Date();
+        document.getElementById("time").value = new Date().toTimeString().slice(0,5);
+    </script>
+
+</body>
+</html>
