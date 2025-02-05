@@ -123,6 +123,16 @@
             </div>
         </div>
 
+<label>Plastic Waste (Qty.):</label>
+<div class="waste-container">
+    <img src="https://th.bing.com/th/id/OIP.RGf5D5HpnnTqt0ZjKggDmgHaE8?rs=1&pid=ImgDetMain" alt="Plastic Waste">
+    <div class="quantity">
+        <button type="button" onclick="adjustValue('plasticWaste', -1)">-</button>
+        <input type="number" id="plasticWaste" name="plasticWaste" value="0" min="0">
+        <button type="button" onclick="adjustValue('plasticWaste', 1)">+</button>
+    </div>
+</div>
+
         <button type="submit" id="submitBtn">Submit</button>
     </form>
 
