@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -147,17 +148,24 @@
             event.preventDefault();
 
             const formData = new FormData(this);
-            
+
             fetch("https://script.google.com/macros/s/AKfycbwc9EhMNTK0mGfQxe8-Kwd4c1ou7Rybm77gKllrdZnR0sHhhhEdaNbQOzfksuPbdSvsxw/exec", { 
                 method: "POST",
                 body: formData
             })
-            .then(response => response.json()) // Ensure JSON response handling
-            .then(data => {
-                if (data.result === "success") {
-                    alert("Data submitted successfully!");
-                } else {
-                    alert("Submission failed. Please try again.");
+            .then(response => response.text()) // Handle both text and JSON responses
+            .then(text => {
+                try {
+                    let data = JSON.parse(text);
+                    if (data.result === "success") {
+                        alert("Data submitted successfully!");
+                        document.getElementById("wasteForm").reset();
+                    } else {
+                        alert("Submission failed. Please try again.");
+                    }
+                } catch (error) {
+                    alert("Unexpected response from server.");
+                    console.error("Response parsing error:", text);
                 }
             })
             .catch(error => {
@@ -167,9 +175,10 @@
         });
 
         // Auto-fill date and time
-        document.getElementById("date").valueAsDate = new Date();
-        document.getElementById("time").value = new Date().toTimeString().slice(0,5);
+        document.getElementById("date").value = new Date().toISOString().split("T")[0];
+        document.getElementById("time").value = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     </script>
 
 </body>
 </html>
+
