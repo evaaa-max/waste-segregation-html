@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: Segoe UI, sans-serif;
-            max-width: 400px;
+            max-width: 450px;
             margin: auto;
             background-color: #f4f4f4;
             padding: 20px;
@@ -28,10 +28,24 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+        .waste-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .waste-container img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
         .quantity {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
         }
         .quantity input {
             text-align: center;
@@ -47,19 +61,6 @@
         }
         .quantity button:hover {
             background: #0056b3;
-        }
-        .waste-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .waste-container img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            border-radius: 5px;
-            border: 1px solid #ccc;
         }
         #submitBtn {
             background: #28a745;
@@ -79,12 +80,13 @@
 
     <form id="wasteForm">
         <label>Date:</label>
-        <input type="date" id="date" name="date" required>
+        <input type="date" id="date" name="date" readonly>
 
         <label>Time:</label>
-        <input type="time" id="time" name="time" required>
+        <input type="time" id="time" name="time" readonly>
 
-        <label>White Paper Waste ಶ್ವೇತಪತ್ರ ತ್ಯಾಜ್ಯ(Qty.):</label>
+        <!-- White Paper Waste -->
+        <label>White Paper Waste ಶ್ವೇತಪತ್ರ ತ್ಯಾಜ್ಯ (Qty.):</label>
         <div class="waste-container">
             <img src="https://thumbs.dreamstime.com/z/paper-wastes-segregated-ready-to-recycling-38682715.jpg" alt="Paper Waste">
             <div class="quantity">
@@ -94,7 +96,8 @@
             </div>
         </div>
 
-        <label>Fabric Waste ಫ್ಯಾಬ್ರಿಕ್ ತ್ಯಾಜ್ಯ(Qty.):</label>
+        <!-- Fabric Waste -->
+        <label>Fabric Waste ಫ್ಯಾಬ್ರಿಕ್ ತ್ಯಾಜ್ಯ (Qty.):</label>
         <div class="waste-container">
             <img src="https://th.bing.com/th/id/OIP.W2mgEgn1IrN-FVijEwpJgQHaE8?rs=1&pid=ImgDetMain" alt="Fabric Waste">
             <div class="quantity">
@@ -104,7 +107,8 @@
             </div>
         </div>
 
-        <label>Carton Paper Waste ಕಾರ್ಟನ್ ಪೇಪರ್ ತ್ಯಾಜ್ಯ(Qty.):</label>
+        <!-- Carton Paper Waste -->
+        <label>Carton Paper Waste ಕಾರ್ಟನ್ ಪೇಪರ್ ತ್ಯಾಜ್ಯ (Qty.):</label>
         <div class="waste-container">
             <img src="https://th.bing.com/th/id/OIP.Aazg7YUrmz3tLvNG46k_vQHaFc?rs=1&pid=ImgDetMain" alt="Carton Paper Waste">
             <div class="quantity">
@@ -114,7 +118,19 @@
             </div>
         </div>
 
-        <label>Plastic Waste ಪ್ಲಾಸ್ಟಿಕ್ ತ್ಯಾಜ್ಯ(Qty.):</label>
+        <!-- Roll Waste -->
+        <label>Roll Waste ರೋಲ್ ತ್ಯಾಜ್ಯ (Qty.):</label>
+        <div class="waste-container">
+            <img src="https://th.bing.com/th/id/OIP.Aazg7YUrmz3tLvNG46k_vQHaFc?rs=1&pid=ImgDetMain" alt="Roll Waste">
+            <div class="quantity">
+                <button type="button" onclick="adjustValue('rollWaste', -1)">-</button>
+                <input type="number" id="rollWaste" name="rollWaste" value="0" min="0">
+                <button type="button" onclick="adjustValue('rollWaste', 1)">+</button>
+            </div>
+        </div>
+
+        <!-- Plastic Waste -->
+        <label>Plastic Waste ಪ್ಲಾಸ್ಟಿಕ್ ತ್ಯಾಜ್ಯ (Qty.):</label>
         <div class="waste-container">
             <img src="https://th.bing.com/th/id/OIP.Hfg66FrgmiKBUjMKXZIzUgHaE8?rs=1&pid=ImgDetMain" alt="Plastic Waste">
             <div class="quantity">
@@ -124,6 +140,9 @@
             </div>
         </div>
 
+        <label>Total Waste (Qty.):</label>
+        <input type="number" id="totalWaste" name="totalWaste" value="0" readonly>
+
         <button type="submit" id="submitBtn">Submit</button>
     </form>
 
@@ -132,49 +151,33 @@
             let input = document.getElementById(id);
             let newValue = parseInt(input.value) + change;
             if (newValue >= 0) input.value = newValue;
+            calculateTotal();
         }
 
-        document.getElementById("wasteForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-
-            const formData = new FormData(this);
-
-            fetch("https://script.google.com/macros/s/AKfycbwc9EhMNTK0mGfQxe8-Kwd4c1ou7Rybm77gKllrdZnR0sHhhhEdaNbQOzfksuPbdSvsxw/exec", { 
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.text()) 
-            .then(text => {
-                try {
-                    let data = JSON.parse(text);
-                    if (data.result === "success") {
-                        alert("Data submitted successfully!");
-                        document.getElementById("wasteForm").reset();
-                        updateDateTime(); // Update time after reset
-                    } else {
-                        alert("Submission failed. Please try again.");
-                    }
-                } catch (error) {
-                    alert("Unexpected response from server.");
-                    console.error("Response parsing error:", text);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred while submitting the form.");
-            });
-        });
+        function calculateTotal() {
+            let total = ["paperWaste", "fabricWaste", "cartonWaste", "rollWaste", "plasticWaste"]
+                .map(id => parseInt(document.getElementById(id).value) || 0)
+                .reduce((a, b) => a + b, 0);
+            document.getElementById("totalWaste").value = total;
+        }
 
         function updateDateTime() {
             const now = new Date();
             document.getElementById("date").value = now.toISOString().split("T")[0];
-
-            const hours = now.getHours().toString().padStart(2, '0');
-            const minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById("time").value = `${hours}:${minutes}`;
+            document.getElementById("time").value = now.toTimeString().split(" ")[0].slice(0, 5);
         }
 
-        // Auto-set date & time on page load
+        document.getElementById("wasteForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            fetch("https://script.google.com/macros/s/AKfycby_dB2IMCw6Blmz_gxqLgNzDUtXVgJh5fbF-NLCRm8P02boS1woSsp1RfMKObHVGKMEwA/exec", { 
+                method: "POST",
+                body: new FormData(this)
+            })
+            .then(response => response.json())
+            .then(data => alert("Data submitted successfully!"))
+            .catch(error => alert("Error submitting form."));
+        });
+
         updateDateTime();
     </script>
 
